@@ -1,6 +1,16 @@
 # Rock Band 3 Keytar Integration, aka "Goonies Piano"
 
-This repository provides **Python scripts** and instructions to make a Rock Band 3 keytar (PS3 version) function as a real MIDI instrument on Linux (or other systems). Additionally, these scripts can **publish key presses** (or chord events) to **MQTT**, enabling integration with Home Assistant or other automation platforms.
+This repository provides **Python scripts** and instructions to make a Rock Band 3 keytar (PS3 version) function as a real MIDI instrument on Linux (or other systems). 
+
+There are two ways to get the Rock Band keytar working as a MIDI instrument.  The easiest way (and least satisfying AFAIC) is to get a MIDI to USB adapter [like this one](https://www.amazon.com/dp/B092QN6BTV/nthmost-20) and plug the MIDI port from the keytar into the USB-A receiver on a computer.
+
+The harder but more satisfying way is to use the wireless dongle that enables the keytar to function as an input from within the range of the dongle (about 15-20 feet). 
+
+This repo assumes you want the MORE AWESOME thing of being able to use the keytar wirelessly.  But this took some doing.  Some coding, that is.  The unique wireless protocol needs to be interpreted and reshaped into MIDI notes.
+
+Additionally, the main.py script can **publish key presses** (or chord events) to **MQTT** (all while still generating MIDI notes) enabling integration with Home Assistant or other automation platforms.  
+
+So now you can have a working Goonies Piano -- play the right chord and your coffee gets made just how you like it. Play the wrong chord and maybe you get flashing red lights all over your house. That's up to you!
 
 ## Table of Contents
 
