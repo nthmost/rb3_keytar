@@ -1,16 +1,4 @@
-Below is an example **`README.md`** that you could place at the top level of your GitHub repo for this project. It covers:
-
-1. A quick overview of the Rock Band 3 PS3 Keytar scripts  
-2. Udev permissions setup  
-3. Python requirements  
-4. MIDI sound setup (with JACK + Qsynth)  
-5. Optional MQTT configuration  
-
-Feel free to edit details or reorder as needed.
-
----
-
-# Rock Band 3 Keytar Integration
+# Rock Band 3 Keytar Integration, aka "Goonies Piano"
 
 This repository provides **Python scripts** and instructions to make a Rock Band 3 keytar (PS3 version) function as a real MIDI instrument on Linux (or other systems). Additionally, these scripts can **publish key presses** (or chord events) to **MQTT**, enabling integration with Home Assistant or other automation platforms.
 
