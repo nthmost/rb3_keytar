@@ -1,3 +1,4 @@
 pyusb
 paho-mqtt
+python-rtmidi
 mido
