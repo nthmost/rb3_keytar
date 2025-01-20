@@ -181,7 +181,7 @@ If you’re using **MIDI** output from `main.py`, you need a **software synthesi
 
 Now you should hear your key presses as a piano (or whatever SoundFont instrument you’ve loaded).
 
-> **Note**: On modern distros, you might skip JACK and just use **ALSA** with Qsynth; results vary. JACK is often recommended for advanced routing.
+> **Note**: On modern distros, you might skip JACK and just use **ALSA** with Qsynth; results vary. JACK may be more trouble than it's worth if you're not doing anything complicated. 
 
 ---
 
