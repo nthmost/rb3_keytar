@@ -1,0 +1,15 @@
+[Unit]
+Description=Setup MIDI and Fluidsynth on Startup
+After=network.target sound.target
+
+[Service]
+ExecStart=/home/nthmost/projects/git/rb3_keytar/sbin/startup_script.sh
+ExecStop=/bin/kill -SIGTERM $(cat /run/fluidsynth/fluidsynth.pid)
+Restart=always
+User=nthmost
+Group=nthmost
+KillMode=none
+
+[Install]
+WantedBy=multi-user.target
+
