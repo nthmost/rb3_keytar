@@ -2,6 +2,8 @@
 
 This repository provides **Python scripts** and instructions to make a Rock Band 3 keytar (PS3 version) function as a real MIDI instrument on Linux (or other systems). 
 
+[Watch a short demo of this in action on YouTube](https://youtu.be/TwV7fXDEKZQ?si=EQEKwk1DgVTlJy4T)
+
 There are two ways to get the Rock Band keytar working as a MIDI instrument.  The easiest way (and least satisfying AFAIC) is to get a MIDI to USB adapter [like this one](https://www.amazon.com/dp/B092QN6BTV/nthmost-20) and plug the MIDI port from the keytar into the USB-A receiver on a computer.
 
 The harder but more satisfying way is to use the wireless dongle that enables the keytar to function as an input from within the range of the dongle (about 15-20 feet). 
