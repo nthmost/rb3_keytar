@@ -110,17 +110,19 @@ def chord_mood(pressed):
             "label": f"dyad {label_for_key(a)}+{label_for_key(b)} = waves",
         }
 
-    # Triad-quality lookup (3+ notes)
-    sorted_keys = sorted(keys)
-    root_pc = sorted_keys[0] % 12
-    intervals = frozenset((k - sorted_keys[0]) % 12 for k in sorted_keys)
-    if intervals in CHORD_QUALITY_EFFECT:
-        quality, effect = CHORD_QUALITY_EFFECT[intervals]
-        return {
-            "kind": "effect",
-            "effect": effect,
-            "label": f"{PITCH_NAMES[root_pc]} {quality} = {effect}",
-        }
+    # Triad-quality lookup, inversion-aware: try each pitch class as the
+    # potential root. C-E-G (root pos) and E-G-C (1st inv) both classify
+    # as C major because both have pitch-class set {0,4,7}.
+    pcs = sorted({k % 12 for k in keys})
+    for root_pc in pcs:
+        intervals = frozenset((p - root_pc) % 12 for p in pcs)
+        if intervals in CHORD_QUALITY_EFFECT:
+            quality, effect = CHORD_QUALITY_EFFECT[intervals]
+            return {
+                "kind": "effect",
+                "effect": effect,
+                "label": f"{PITCH_NAMES[root_pc]} {quality} = {effect}",
+            }
 
     return {
         "kind": "effect",
