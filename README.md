@@ -14,6 +14,12 @@ Additionally, the main.py script can **publish key presses** (or chord events) t
 
 So now you can have a working Goonies Piano -- play the right chord and your coffee gets made just how you like it. Play the wrong chord and maybe you get flashing red lights all over your house. That's up to you!
 
+This repo also ships a **worked example** of that idea: a "mood pipeline" that
+turns single key presses into solid colors and chord shapes into animated
+effects on a SwitchBot RGBIC Neon Wire light, over MQTT + Bluetooth LE. See
+[Mood Pipeline (Keytar → MQTT → Lights)](#mood-pipeline-keytar--mqtt--lights)
+below, and [CHORD_SHEET.md](CHORD_SHEET.md) for the printable player's guide.
+
 ## Table of Contents
 
 - [Overview](#overview)  
@@ -25,6 +31,8 @@ So now you can have a working Goonies Piano -- play the right chord and your cof
   - [2. `main.py` (MIDI + MQTT)](#2-mainpy-midi--mqtt)  
   - [3. `main_audio.py` (PyGame WAV samples)](#3-main_audiopy-pygame-wav-samples)  
   - [4. `chord_listener.py` (MQTT subscriber)](#4-chord_listenerpy-mqtt-subscriber)  
+- [Mood Pipeline (Keytar → MQTT → Lights)](#mood-pipeline-keytar--mqtt--lights)
+- [Player's Chord Sheet](#players-chord-sheet)
 - [MIDI Sound Setup](#midi-sound-setup)  
   - [Using JACK and Qsynth](#using-jack-and-qsynth)  
 - [MQTT Setup](#mqtt-setup)  
@@ -160,6 +168,76 @@ Then connect a synth (e.g., Qsynth) to “RB3 Keytar Out” to hear notes, and s
 - Example of a script that **subscribes** to the same MQTT topic your keytar script publishes.  
 - Interprets chord sets (like `["C1","E1","G1"]`) by looking them up in a dictionary.  
 - Prints or logs the chord name (e.g., “C1 major”).
+
+---
+
+## Mood Pipeline (Keytar → MQTT → Lights)
+
+A standalone subsystem that turns keystrokes into a lighting performance —
+**no MIDI required.** Single key presses set solid colors (pitch class →
+color wheel, octave → brightness); chord *shapes* (chord-quality, inversion-
+aware) trigger native firmware effects on a SwitchBot RGBIC Neon Wire light.
+
+Three Python files plus two shell wrappers:
+
+| File | Role |
+|---|---|
+| `mood_map.py` | Pure classification: pressed-key set → mood event dict. Maps single keys to RGB solids and chords to effect names (`rainbow`, `meditation`, `lightning`, `mystery`, `heartbeat`, `dream`, `waves`, `fireworks`, `party`). No I/O. |
+| `publish_mood.py` | Reads the keytar (via `rb3keytar.RB3Keytar`), debounces with `ChordDetector` (0.2s hold), publishes mood events as JSON to MQTT topic `player/keytar/mood` (`retain=True`). |
+| `mood_to_light.py` | Subscribes to `player/keytar/mood` via `aiomqtt`, drives the SwitchBot light over BLE via `pySwitchbot`. Keeps a continuous `BleakScanner` running so the device handle stays fresh. ~250-450ms latency per command. |
+| `run_mood.sh` | Wrapper: sources `~/.config/rb3_keytar/env`, runs `publish_mood.py`. |
+| `run_light.sh` | Wrapper: sources `~/.config/rb3_keytar/env`, runs `mood_to_light.py`. |
+
+### Setup
+
+1. **Install BLE deps** in your venv:
+   ```bash
+   pip install pyusb paho-mqtt aiomqtt bleak PySwitchbot aiohttp
+   ```
+2. **Fetch the SwitchBot device encryption key** (one-time). Newer SwitchBot
+   devices use encrypted BLE; the key must be retrieved from SwitchBot Cloud
+   using your account credentials:
+   ```bash
+   SWITCHBOT_USERNAME=you@example.com \
+   SWITCHBOT_PASSWORD=... \
+   DEVICE_MAC=AA:BB:CC:DD:EE:FF \
+       python fetch_switchbot_key.py
+   ```
+   Copy the three `SWITCHBOT_*` lines it prints into `~/.config/rb3_keytar/env`.
+3. **Populate the env file** (mode 600):
+   ```
+   MQTT_HOST=homeassistant.local
+   MQTT_USER=player
+   MQTT_PASS=...
+   SWITCHBOT_DEVICE_MAC=AA:BB:CC:DD:EE:FF
+   SWITCHBOT_KEY_ID=...
+   SWITCHBOT_ENCRYPTION_KEY=...
+   ```
+4. **Run the two services** (separate terminals, or as systemd units):
+   ```bash
+   ./run_mood.sh    # publishes mood events from keytar
+   ./run_light.sh   # subscribes and drives the light over BLE
+   ```
+
+Architecture: the publisher and subscriber can run on the same host or
+different hosts — MQTT decouples them. Putting the BLE bridge on a machine
+*near the light* avoids range issues and gives Home Assistant other
+subscribers free access to the same mood stream.
+
+---
+
+## Player's Chord Sheet
+
+[`CHORD_SHEET.md`](CHORD_SHEET.md) is a one-page printable guide for
+performers. It covers:
+
+- All 25 single keys → solid colors on the chromatic spectrum
+- 10 chord shapes → effects (major/minor/dim/aug/sus/cluster/octave/etc.)
+- Concrete examples and suggested progressions
+- Tips on stickiness, BLE lag, and the C1+C3 reset gesture
+
+Renders nicely directly from GitHub for printing, or run
+`pandoc CHORD_SHEET.md -o chord_sheet.pdf` for a PDF.
 
 ---
 
