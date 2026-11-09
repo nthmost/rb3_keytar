@@ -20,6 +20,16 @@ effects on a SwitchBot RGBIC Neon Wire light, over MQTT + Bluetooth LE. See
 [Mood Pipeline (Keytar → MQTT → Lights)](#mood-pipeline-keytar--mqtt--lights)
 below, and [CHORD_SHEET.md](CHORD_SHEET.md) for the printable player's guide.
 
+## Native macOS app: Keytarist
+
+Prefer a GUI? [**`keytarist/`**](keytarist/) is a standalone native macOS app
+(SwiftUI) that visualizes the keytar as you play — live on-screen piano, held
+note names, inversion-aware chord detection, and a built-in polyphonic synth with
+sound palettes you cycle using the button on the keytar's handle. It reads the
+keyboard directly over USB-HID (no MIDI adapter, no Python). See
+[`keytarist/README.md`](keytarist/README.md) for build instructions and the
+reverse-engineered HID report layout.
+
 ## Table of Contents
 
 - [Overview](#overview)  
